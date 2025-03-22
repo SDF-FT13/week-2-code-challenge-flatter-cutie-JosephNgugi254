@@ -65,6 +65,7 @@ As a user, I can:
    character information from your first request, or make a new request to this
    endpoint to get the character's details:
 
+
    ```txt
    GET /characters/:id
 
