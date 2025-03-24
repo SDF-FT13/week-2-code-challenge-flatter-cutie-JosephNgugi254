@@ -4,31 +4,31 @@
       "id": "1",
       "name": "Mr. Cute",
       "image": "https://media.tenor.com/KFuQzllegkYAAAAM/cat-sticker-line-sticker.gif",
-      "votes": 18
+      "votes": 39
     },
     {
       "id": "2",
-      "name": "Mx. Monkey",
-      "image": "https://media1.tenor.com/m/-oUoRTweJoEAAAAC/happy-monkey.gif",
-      "votes": 123
+      "name": "Mr. Monkey",
+      "image": "https://i.pinimg.com/originals/3c/a6/93/3ca693d7b767e91e6c3b00d5f0d0f606.gif",
+      "votes": 138
     },
     {
       "id": "3",
       "name": "Ms. Zebra",
       "image": "https://media2.giphy.com/media/20G9uNqE3K4dRjCppA/source.gif",
-      "votes": 60
+      "votes": 140
     },
     {
       "id": "4",
       "name": "Dr. Lion",
       "image": "http://bestanimations.com/Animals/Mammals/Cats/Lions/animated-lion-gif-11.gif",
-      "votes": 10
+      "votes": 15
     },
     {
       "id": "5",
       "name": "Mme. Panda",
       "image": "https://media.giphy.com/media/ALalVMOVR8Qw/giphy.gif",
-      "votes": 5
+      "votes": 32
     }
   ]
 }
