@@ -1,9 +1,8 @@
-// Fetch characters and render them in the character bar
 document.addEventListener("DOMContentLoaded", () => {
     const characterBar = document.getElementById("character-bar");
-    const detailedInfo = document.getElementById("detailed-info");
     const voteForm = document.getElementById("votes-form");
     const resetButton = document.getElementById("reset-btn");
+    let currentCharacter;
 
     fetch("http://localhost:3000/characters")
         .then((response) => response.json())
@@ -16,14 +15,57 @@ document.addEventListener("DOMContentLoaded", () => {
                 characterBar.appendChild(span);
             });
 
-            // Display "Mr. Cute" by default
             const mrCute = characters.find((character) => character.name === "Mr. Cute");
             if (mrCute) {
                 displayCharacterDetails(mrCute);
             }
-        });
+        })
+        .catch(error => console.error("Error fetching characters:", error));
+
+    
+    voteForm.addEventListener("submit", (event) => {
+        event.preventDefault(); 
+        
+        const votesInput = document.getElementById("votes");
+        const voteCountElement = document.getElementById("vote-count");
+        const additionalVotes = parseInt(votesInput.value, 10);
+
+        if (!isNaN(additionalVotes) && currentCharacter) {
+            const newVoteCount = currentCharacter.votes + additionalVotes;
+            
+            
+            voteCountElement.textContent = newVoteCount;
+            
+            
+            fetch(`http://localhost:3000/characters/${currentCharacter.id}`, {
+                method: "PATCH",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ votes: newVoteCount })
+            })
+            .then(response => {
+                if (response.ok) {
+                    currentCharacter.votes = newVoteCount; 
+                } else {
+                    
+                    voteCountElement.textContent = currentCharacter.votes;
+                    console.error("Failed to update votes on server");
+                }
+            })
+            .catch(error => {
+                
+                voteCountElement.textContent = currentCharacter.votes;
+                console.error("Network error:", error);
+            });
+        }
+        
+        votesInput.value = ""; 
+    });
 
     function displayCharacterDetails(character) {
+        currentCharacter = character;
+        
         const nameElement = document.getElementById("name");
         const imageElement = document.getElementById("image");
         const voteCountElement = document.getElementById("vote-count");
@@ -33,39 +75,28 @@ document.addEventListener("DOMContentLoaded", () => {
         imageElement.alt = character.name;
         voteCountElement.textContent = character.votes;
 
-        // Handle vote submission
-        voteForm.onsubmit = function(event) {
-            event.preventDefault(); // Ensure default behavior is prevented
-            const votesInput = document.getElementById("votes");
-            const additionalVotes = parseInt(votesInput.value, 10);
-            if (!isNaN(additionalVotes)) {
-                character.votes += additionalVotes;
-                voteCountElement.textContent = character.votes;
-
-                // Update the votes in the database
-                fetch(`http://localhost:3000/characters/${character.id}`, {
-                    method: "PATCH",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({ votes: character.votes }),
-                });
-            }
-            votesInput.value = "";
-        };
-
-        // Handle vote reset
         resetButton.onclick = () => {
-            character.votes = 0;
-            voteCountElement.textContent = character.votes;
-
-            // Reset the votes in the database
-            fetch(`http://localhost:3000/characters/${character.id}`, {
+            const originalVotes = currentCharacter.votes;
+            voteCountElement.textContent = 0;
+            
+            fetch(`http://localhost:3000/characters/${currentCharacter.id}`, {
                 method: "PATCH",
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ votes: character.votes }),
+                body: JSON.stringify({ votes: 0 })
+            })
+            .then(response => {
+                if (response.ok) {
+                    currentCharacter.votes = 0;
+                } else {
+                    voteCountElement.textContent = originalVotes;
+                    console.error("Failed to reset votes");
+                }
+            })
+            .catch(error => {
+                voteCountElement.textContent = originalVotes;
+                console.error("Network error:", error);
             });
         };
     }
